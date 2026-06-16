@@ -28,6 +28,7 @@ fun HomeScreen(
     selectedDateText: String,
     availableDateTexts: List<String>,
     onDateSelected: (String) -> Unit,
+    onMyLotteryClick: () -> Unit,
     modifier: Modifier = Modifier,
     searchErrorText: String? = null,
     latestPrizeGroups: List<HomePrizeGroup> = homePreviewPrizeGroups,
@@ -194,6 +195,7 @@ private fun HomeScreenPreview() {
                     "1 กรกฎาคม 2569",
                 ),
                 onDateSelected = {},
+                onMyLotteryClick = {},
             )
         }
     }
