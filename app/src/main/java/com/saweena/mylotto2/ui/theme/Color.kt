@@ -2,15 +2,15 @@ package com.saweena.mylotto2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Background = Color(0xFFF6F8F5)
+val Background = Color(0xFFEDECEC)
 val Surface = Color(0xFFFFFFFF)
-val SurfaceGreen = Color(0xFFE8F5E9)
+val SurfaceGreen = Color(0xFFC8E6C9)
 val SurfaceYellow = Color(0xFFFFF8E1)
 val Overlay = Color(0xFF000000)
 
-val Primary = Color(0xFF2E7D32)
-val PrimaryLight = Color(0xFF60AD5E)
-val PrimaryDark = Color(0xFF005005)
+val Primary = Color(0xFF66BB6A)
+val PrimaryLight = Color(0xFF98EE99)
+val PrimaryDark = Color(0xFF338A3E)
 val Secondary = Color(0xFFF9A825)
 
 val Success = Color(0xFF2E7D32)

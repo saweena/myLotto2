@@ -1,20 +1,29 @@
 package com.saweena.mylotto2.ui.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.saweena.mylotto2.ui.component.DrawDateSelector
 import com.saweena.mylotto2.ui.component.LotterySearchBar
 import com.saweena.mylotto2.ui.component.PrizeCard
@@ -34,9 +43,11 @@ fun HomeScreen(
     latestPrizeGroups: List<HomePrizeGroup> = homePreviewPrizeGroups,
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
             HomeHeaderSection(
@@ -46,6 +57,7 @@ fun HomeScreen(
                 selectedDateText = selectedDateText,
                 availableDateTexts = availableDateTexts,
                 onDateSelected = onDateSelected,
+                onMyLotteryClick = onMyLotteryClick,
                 searchErrorText = searchErrorText,
             )
         }
@@ -67,40 +79,86 @@ private fun HomeHeaderSection(
     selectedDateText: String,
     availableDateTexts: List<String>,
     onDateSelected: (String) -> Unit,
+    onMyLotteryClick: () -> Unit,
     searchErrorText: String?,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = RoundedCornerShape(
+            bottomStart = 30.dp,
+            bottomEnd = 30.dp,
+        ),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(
+                start = 15.dp,
+                top = 10.dp,
+                end = 15.dp,
+                bottom = 12.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text = "MyLotto",
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LotterySearchBar(
+                    value = lotteryNumber,
+                    onValueChange = onLotteryNumberChange,
+                    onSearchClick = onSearchClick,
+                    modifier = Modifier.weight(1f),
+                    errorText = searchErrorText,
+                )
 
-            Text(
-                text = "ตรวจผลสลากกินแบ่งรัฐบาลแบบเรียบง่ายและเชื่อถือได้",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
-            )
+                Surface(
+                    modifier = Modifier.size(45.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.primaryContainer,
+                ) {
+                    Text(
+                        text = "▦",
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
 
-            LotterySearchBar(
-                value = lotteryNumber,
-                onValueChange = onLotteryNumberChange,
-                onSearchClick = onSearchClick,
-                errorText = searchErrorText,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .size(width = 88.dp, height = 66.dp)
+                        .clickable(onClick = onMyLotteryClick),
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "ตรวจ\nหวย\nรวยๆ",
+                            modifier = Modifier.fillMaxWidth(),
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 19.sp,
+                                lineHeight = 17.sp,
+                            ),
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
 
-            DrawDateSelector(
-                selectedDateText = selectedDateText,
-                availableDateTexts = availableDateTexts,
-                onDateSelected = onDateSelected,
-            )
+                DrawDateSelector(
+                    selectedDateText = selectedDateText,
+                    availableDateTexts = availableDateTexts,
+                    onDateSelected = onDateSelected,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }
@@ -110,30 +168,72 @@ private fun LatestResultSection(
     selectedDateText: String,
     prizeGroups: List<HomePrizeGroup>,
 ) {
+    val firstThreeDigits = prizeGroups.firstOrNull { it.title == "เลขหน้า 3 ตัว" }
+    val lastThreeDigits = prizeGroups.firstOrNull { it.title == "เลขท้าย 3 ตัว" }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "ผลสลากกินแบ่งรัฐบาล",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
 
         Text(
-            text = selectedDateText,
-            style = MaterialTheme.typography.bodyMedium,
+            text = "งวดวันที่ $selectedDateText",
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
         )
 
         for (prizeGroup in prizeGroups) {
+            if (prizeGroup.title == "เลขท้าย 3 ตัว") continue
+            if (prizeGroup.title == "เลขหน้า 3 ตัว" && lastThreeDigits != null) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    PrizeCard(
+                        title = prizeGroup.title,
+                        prizeAmountText = prizeGroup.prizeAmountText,
+                        numbers = prizeGroup.numbers,
+                        emphasized = prizeGroup.emphasized,
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    PrizeCard(
+                        title = lastThreeDigits.title,
+                        prizeAmountText = lastThreeDigits.prizeAmountText,
+                        numbers = lastThreeDigits.numbers,
+                        emphasized = lastThreeDigits.emphasized,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                continue
+            }
+
+            val cardModifier = if (prizeGroup.title == "เลขท้าย 2 ตัว") {
+                Modifier.fillMaxWidth(0.52f)
+            } else if (prizeGroup.emphasized) {
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 28.dp)
+            } else {
+                Modifier.fillMaxWidth()
+            }
+
             PrizeCard(
                 title = prizeGroup.title,
                 prizeAmountText = prizeGroup.prizeAmountText,
                 numbers = prizeGroup.numbers,
                 emphasized = prizeGroup.emphasized,
+                modifier = cardModifier,
             )
         }
     }

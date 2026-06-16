@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.saweena.mylotto2.ui.theme.MyLotto2Theme
-import com.saweena.mylotto2.ui.theme.SurfaceYellow
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -30,44 +29,28 @@ fun PrizeCard(
     emphasized: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val containerColor = if (emphasized) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.primaryContainer
-    }
-    val contentContainerColor = if (emphasized) {
-        SurfaceYellow
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
-    val contentColor = if (emphasized) {
-        MaterialTheme.colorScheme.onPrimary
-    } else {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    }
+    val contentColor = MaterialTheme.colorScheme.onPrimary
     val numbersTextStyle = if (emphasized) {
         MaterialTheme.typography.displayLarge
     } else {
         MaterialTheme.typography.headlineMedium
     }
-    val innerPadding = if (emphasized) 20.dp else 16.dp
 
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = containerColor,
+        color = MaterialTheme.colorScheme.primary,
         contentColor = contentColor,
-        shape = RoundedCornerShape(if (emphasized) 20.dp else 14.dp),
-        tonalElevation = if (emphasized) 4.dp else 1.dp,
-        shadowElevation = if (emphasized) 2.dp else 0.dp,
+        shape = RoundedCornerShape(15.dp),
+        shadowElevation = 0.dp,
     ) {
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium.copy(
+                style = MaterialTheme.typography.headlineSmall.copy(
                     color = contentColor,
                     fontWeight = FontWeight.Bold,
                 ),
@@ -77,32 +60,37 @@ fun PrizeCard(
             if (!prizeAmountText.isNullOrBlank()) {
                 Text(
                     text = prizeAmountText,
-                    style = MaterialTheme.typography.bodyMedium.copy(color = contentColor),
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        color = contentColor,
+                        fontWeight = FontWeight.Bold,
+                    ),
                     textAlign = TextAlign.Center,
                 )
             }
 
             Surface(
-                color = contentContainerColor,
+                color = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                shape = RoundedCornerShape(if (emphasized) 16.dp else 12.dp),
-                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(0.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
             ) {
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             PaddingValues(
-                                horizontal = if (emphasized) 20.dp else 16.dp,
-                                vertical = if (emphasized) 18.dp else 14.dp,
+                                horizontal = if (emphasized) 20.dp else 10.dp,
+                                vertical = if (emphasized) 8.dp else 6.dp,
                             )
                         ),
                     horizontalArrangement = Arrangement.spacedBy(
-                        space = 12.dp,
+                        space = if (emphasized) 12.dp else 18.dp,
                         alignment = Alignment.CenterHorizontally,
                     ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    maxItemsInEachRow = if (emphasized) 1 else 3,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    maxItemsInEachRow = if (emphasized) 1 else 2,
                 ) {
                     for (number in numbers) {
                         Text(
