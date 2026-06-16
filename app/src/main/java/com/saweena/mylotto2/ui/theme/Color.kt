@@ -2,10 +2,31 @@ package com.saweena.mylotto2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val Background = Color(0xFFF6F8F5)
+val Surface = Color(0xFFFFFFFF)
+val SurfaceGreen = Color(0xFFE8F5E9)
+val SurfaceYellow = Color(0xFFFFF8E1)
+val Overlay = Color(0xFF000000)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val Primary = Color(0xFF2E7D32)
+val PrimaryLight = Color(0xFF60AD5E)
+val PrimaryDark = Color(0xFF005005)
+val Secondary = Color(0xFFF9A825)
+
+val Success = Color(0xFF2E7D32)
+val Warning = Color(0xFFF9A825)
+val Error = Color(0xFFD32F2F)
+val Info = Color(0xFF1976D2)
+
+val TextPrimary = Color(0xFF1B1B1B)
+val TextSecondary = Color(0xFF4F5B52)
+val TextTertiary = Color(0xFF7A857D)
+val TextOnPrimary = Color(0xFFFFFFFF)
+val Border = Color(0xFFDDE5DD)
+
+val DarkBackground = Color(0xFF0F130F)
+val DarkSurface = Color(0xFF172018)
+val DarkSurfaceVariant = Color(0xFF243126)
+val DarkTextPrimary = Color(0xFFF4F7F2)
+val DarkTextSecondary = Color(0xFFBEC9BF)
+val DarkBorder = Color(0xFF314233)
