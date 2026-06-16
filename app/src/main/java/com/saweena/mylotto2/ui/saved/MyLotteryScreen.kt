@@ -1,18 +1,22 @@
 package com.saweena.mylotto2.ui.saved
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -29,11 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.saweena.mylotto2.ui.component.LottoTopBar
 import com.saweena.mylotto2.ui.theme.MyLotto2Theme
-import com.saweena.mylotto2.ui.theme.SurfaceGreen
-import com.saweena.mylotto2.ui.theme.SurfaceYellow
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MyLotteryScreen(
     savedLotteries: List<SavedLotteryUiModel>,
@@ -47,14 +49,15 @@ fun MyLotteryScreen(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                LottoTopBar(
-                    title = "เลขของฉัน",
-                    showBack = true,
+                LegacySavedTopBar(
                     onBackClick = onBackClick,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                 )
@@ -67,17 +70,44 @@ fun MyLotteryScreen(
                     )
                 }
             } else {
-                items(
-                    items = savedLotteries,
-                    key = { it.id },
-                ) { savedLottery ->
-                    SavedLotteryCard(
-                        savedLottery = savedLottery,
-                        onClick = { onLotteryClick(savedLottery) },
-                        onDeleteClick = { onDeleteClick(savedLottery) },
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                    )
-                }
+                savedLotteries
+                    .groupBy { it.drawDateText }
+                    .forEach { (drawDateText, lotteries) ->
+                        item(key = drawDateText) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                            ) {
+                                Text(
+                                    text = drawDateText,
+                                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                )
+
+                                FlowRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(
+                                        space = 12.dp,
+                                        alignment = Alignment.CenterHorizontally,
+                                    ),
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                                    maxItemsInEachRow = 3,
+                                ) {
+                                    lotteries.forEach { savedLottery ->
+                                        SavedLotteryCard(
+                                            savedLottery = savedLottery,
+                                            onClick = { onLotteryClick(savedLottery) },
+                                            onDeleteClick = { onDeleteClick(savedLottery) },
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
             }
         }
 
@@ -91,94 +121,81 @@ fun MyLotteryScreen(
 }
 
 @Composable
+private fun LegacySavedTopBar(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .size(48.dp),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "ย้อนกลับ",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        Text(
+            text = "ผลตรวจสลาก",
+            modifier = Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
 fun SavedLotteryCard(
     savedLottery: SavedLotteryUiModel,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    @Suppress("UNUSED_EXPRESSION")
+    onDeleteClick
+
+    val chipColor = when (savedLottery.status) {
+        LotteryStatusUiModel.Won -> MaterialTheme.colorScheme.primary
+        LotteryStatusUiModel.Pending,
+        LotteryStatusUiModel.NotWon,
+        -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f)
+    }
+    val amountText = when {
+        !savedLottery.prizeSummaryText.isNullOrBlank() -> "x1"
+        else -> null
+    }
+
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        color = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large,
-        tonalElevation = 1.dp,
-        shadowElevation = 1.dp,
+        modifier = modifier.clickable(onClick = onClick),
+        color = chipColor,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = RoundedCornerShape(5.dp),
+        shadowElevation = 5.dp,
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(start = 6.dp, top = 5.dp, end = 8.dp, bottom = 5.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+            Text(
+                text = savedLottery.lotteryNumber,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+
+            if (amountText != null) {
                 Text(
-                    text = savedLottery.lotteryNumber,
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-
-                Text(
-                    text = savedLottery.drawDateText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-
-                StatusChip(status = savedLottery.status)
-
-                if (!savedLottery.prizeSummaryText.isNullOrBlank()) {
-                    Text(
-                        text = savedLottery.prizeSummaryText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-            }
-
-            IconButton(
-                onClick = onDeleteClick,
-                modifier = Modifier.size(48.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = "ลบเลขสลาก",
-                    tint = MaterialTheme.colorScheme.error,
+                    text = amountText,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun StatusChip(
-    status: LotteryStatusUiModel,
-    modifier: Modifier = Modifier,
-) {
-    val containerColor = when (status) {
-        LotteryStatusUiModel.Pending -> SurfaceYellow
-        LotteryStatusUiModel.Won -> SurfaceGreen
-        LotteryStatusUiModel.NotWon -> MaterialTheme.colorScheme.surfaceVariant
-    }
-    val contentColor = when (status) {
-        LotteryStatusUiModel.Pending -> MaterialTheme.colorScheme.secondary
-        LotteryStatusUiModel.Won -> MaterialTheme.colorScheme.primary
-        LotteryStatusUiModel.NotWon -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-
-    Surface(
-        modifier = modifier,
-        color = containerColor,
-        contentColor = contentColor,
-        shape = MaterialTheme.shapes.small,
-    ) {
-        Text(
-            text = status.label,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            style = MaterialTheme.typography.labelLarge,
-        )
     }
 }
 
@@ -275,8 +292,76 @@ private val savedLotteryPreviewItems = listOf(
     ),
     SavedLotteryUiModel(
         id = "3",
-        lotteryNumber = "888888",
+        lotteryNumber = "258697",
+        drawDateText = "16 มิถุนายน 2569",
+        status = LotteryStatusUiModel.Won,
+        prizeSummaryText = "เลขท้าย 2 ตัว",
+    ),
+    SavedLotteryUiModel(
+        id = "4",
+        lotteryNumber = "906781",
+        drawDateText = "16 มิถุนายน 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "5",
+        lotteryNumber = "507947",
+        drawDateText = "16 มิถุนายน 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "6",
+        lotteryNumber = "153646",
+        drawDateText = "16 มิถุนายน 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "7",
+        lotteryNumber = "653521",
         drawDateText = "1 มิถุนายน 2569",
+        status = LotteryStatusUiModel.Won,
+        prizeSummaryText = "เลขหน้า 3 ตัว",
+    ),
+    SavedLotteryUiModel(
+        id = "8",
+        lotteryNumber = "566129",
+        drawDateText = "1 มิถุนายน 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "9",
+        lotteryNumber = "462354",
+        drawDateText = "1 มิถุนายน 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "10",
+        lotteryNumber = "573351",
+        drawDateText = "16 พฤษภาคม 2569",
+        status = LotteryStatusUiModel.Pending,
+    ),
+    SavedLotteryUiModel(
+        id = "11",
+        lotteryNumber = "469213",
+        drawDateText = "16 พฤษภาคม 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "12",
+        lotteryNumber = "366980",
+        drawDateText = "16 พฤษภาคม 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "13",
+        lotteryNumber = "888888",
+        drawDateText = "16 พฤษภาคม 2569",
+        status = LotteryStatusUiModel.NotWon,
+    ),
+    SavedLotteryUiModel(
+        id = "14",
+        lotteryNumber = "150684",
+        drawDateText = "16 พฤษภาคม 2569",
         status = LotteryStatusUiModel.NotWon,
     ),
 )
