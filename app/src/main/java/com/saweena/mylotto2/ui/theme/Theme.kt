@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 private val ErrorContainer = Error.copy(alpha = 0.24f)
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryLight,
-    onPrimary = TextPrimary,
-    primaryContainer = Primary,
-    onPrimaryContainer = TextOnPrimary,
+    primary = Primary,
+    onPrimary = TextOnPrimary,
+    primaryContainer = SurfaceGreen,
+    onPrimaryContainer = TextPrimary,
     secondary = Secondary,
     onSecondary = TextPrimary,
     secondaryContainer = DarkSurfaceVariant,

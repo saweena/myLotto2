@@ -103,7 +103,8 @@ fun LotterySearchBar(
                         onClick = onSearchClick,
                         enabled = isSearchEnabled,
                         modifier = Modifier
-                            .size(56.dp)
+                            .padding(end = 6.dp)
+                            .size(46.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .semantics {
                                 contentDescription = "ค้นหาเลขสลาก"
@@ -111,18 +112,19 @@ fun LotterySearchBar(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(46.dp)
                                 .clip(RoundedCornerShape(10.dp)),
                             contentAlignment = Alignment.Center,
                         ) {
                             Surface(
                                 modifier = Modifier.matchParentSize(),
-                                color = MaterialTheme.colorScheme.primaryContainer,
+                                color = MaterialTheme.colorScheme.primary,
                             ) {}
                             Icon(
                                 imageVector = Icons.Filled.Search,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(10.dp),
                             )
                         }
                     }
