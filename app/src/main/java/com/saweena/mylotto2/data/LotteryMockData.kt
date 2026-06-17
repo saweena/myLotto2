@@ -1,6 +1,6 @@
 package com.saweena.mylotto2.data
 
-import com.saweena.mylotto2.domain.LotteryChecker
+import com.saweena.mylotto2.domain.CheckLotteryResultUseCase
 import com.saweena.mylotto2.model.LotteryCheckStatus
 import com.saweena.mylotto2.model.LotteryDraw
 import com.saweena.mylotto2.model.SavedLotteryNumber
@@ -27,7 +27,7 @@ object LotteryMockData {
             id = "saved-123456",
             number = "123456",
             drawDateText = latestDraw.drawDateText,
-            status = LotteryChecker.check(
+            status = CheckLotteryResultUseCase.check(
                 lotteryNumber = "123456",
                 draw = latestDraw,
             ),

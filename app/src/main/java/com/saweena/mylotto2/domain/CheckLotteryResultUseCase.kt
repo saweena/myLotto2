@@ -5,7 +5,7 @@ import com.saweena.mylotto2.model.LotteryDraw
 import com.saweena.mylotto2.model.MatchedPrize
 import com.saweena.mylotto2.model.PrizePriority
 
-object LotteryChecker {
+object CheckLotteryResultUseCase {
     fun check(
         lotteryNumber: String,
         draw: LotteryDraw,

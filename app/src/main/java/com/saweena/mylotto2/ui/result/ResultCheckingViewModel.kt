@@ -2,7 +2,7 @@ package com.saweena.mylotto2.ui.result
 
 import androidx.lifecycle.ViewModel
 import com.saweena.mylotto2.data.LotteryRepository
-import com.saweena.mylotto2.domain.LotteryChecker
+import com.saweena.mylotto2.domain.CheckLotteryResultUseCase
 import com.saweena.mylotto2.model.SavedLotteryNumber
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,7 +43,7 @@ class ResultCheckingViewModel : ViewModel() {
                 id = currentLotteryNumber.toSavedLotteryId(draw.drawDateText),
                 number = currentLotteryNumber,
                 drawDateText = draw.drawDateText,
-                status = LotteryChecker.check(
+                status = CheckLotteryResultUseCase.check(
                     lotteryNumber = currentLotteryNumber,
                     draw = draw,
                 ),
@@ -61,7 +61,7 @@ class ResultCheckingViewModel : ViewModel() {
     ): ResultCheckingUiState {
         val draw = LotteryRepository.getDrawByDateText(drawDateText)
             ?: LotteryRepository.getLatestDraw()
-        val checkStatus = LotteryChecker.check(
+        val checkStatus = CheckLotteryResultUseCase.check(
             lotteryNumber = lotteryNumber,
             draw = draw,
         )
